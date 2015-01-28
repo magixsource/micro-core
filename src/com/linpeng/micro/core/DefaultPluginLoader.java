@@ -6,7 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.linpeng.micro.action.Action;
 
 /**
  * Load plugin's environment into ctx
@@ -17,10 +21,10 @@ import java.util.List;
 public class DefaultPluginLoader implements PluginLoader {
 
 	private DefaultFrameworkContext ctx;
+	public static final File plugins = new File(PLUGIN_SOURCE);
 
 	@Override
 	public void load() {
-		File plugins = new File(PLUGIN_SOURCE);
 		checkDirectory(plugins);
 		for (File plugin : plugins.listFiles()) {
 			loadPlugin(plugin);
@@ -134,22 +138,64 @@ public class DefaultPluginLoader implements PluginLoader {
 	 * 
 	 * @param item
 	 */
-	@SuppressWarnings("unchecked")
 	private void loadAction(String pluginName, File item) {
-		List<String> pluginActions = (List<String>) getCtx().getActions().get(
-				pluginName);
-		boolean callback = false;
+		Map<String, Object> pluginActions = getCtx().getActions();
+
 		if (null == pluginActions) {
-			pluginActions = new ArrayList<String>();
-			callback = true;
+			pluginActions = new HashMap<String, Object>();
 		}
-		// ClassLoader classLoader = this.getClass().getClassLoader();
-		for (File action : item.listFiles()) {
-			pluginActions.add(action.getName());
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		List<File> javaFiles = new ArrayList<File>();
+
+		String basePath = plugins.getAbsolutePath() + File.separatorChar
+				+ pluginName + File.separatorChar + "action"
+				+ File.separatorChar;
+
+		recursiveFile(item, javaFiles);
+		for (File action : javaFiles) {
+
+			String className = parsetPath2ClassName(action.getAbsolutePath(),
+					basePath);
+			try {
+				Class<?> clz = classLoader.loadClass(className);
+				if (clz.isAnnotationPresent(Action.class)) {
+					String actionName = clz.getAnnotation(Action.class).value() == null ? clz
+							.getSimpleName().toLowerCase() : clz.getAnnotation(
+							Action.class).value();
+					pluginActions.put(actionName, clz);
+				}
+
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
-		if (callback) {
-			getCtx().getActions().put(pluginName, pluginActions);
+
+	}
+
+	private String parsetPath2ClassName(String path, String basePath) {
+		String className = path.replace(basePath, "").replace(".java", "")
+				.replace(File.separator, ".");
+		return className;
+	}
+
+	private void recursiveFile(File item, List<File> javaFiles) {
+		if (item.isDirectory()) {
+			for (File file : item.listFiles()) {
+				recursiveFile(file, javaFiles);
+			}
+		} else {
+			if (item.getName().endsWith(".java")) {
+				javaFiles.add(item);
+			}
 		}
+	}
+
+	public DefaultFrameworkContext getCtx() {
+		return ctx;
+	}
+
+	public void setCtx(DefaultFrameworkContext ctx) {
+		this.ctx = ctx;
 	}
 
 	/**
@@ -163,13 +209,6 @@ public class DefaultPluginLoader implements PluginLoader {
 		loader.setCtx(ctx);
 		loader.load();
 		System.out.println(ctx);
-	}
 
-	public DefaultFrameworkContext getCtx() {
-		return ctx;
-	}
-
-	public void setCtx(DefaultFrameworkContext ctx) {
-		this.ctx = ctx;
 	}
 }
