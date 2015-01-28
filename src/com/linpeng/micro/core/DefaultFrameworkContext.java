@@ -13,7 +13,7 @@ public class DefaultFrameworkContext implements FrameworkContext {
 	private Map<String, Object> actions = new HashMap<String, Object>();
 	private Map<String, Object> routers = new HashMap<String, Object>();
 	private Map<String, Object> views = new HashMap<String, Object>();
-
+	
 	public Map<String, Object> getViews() {
 		return views;
 	}

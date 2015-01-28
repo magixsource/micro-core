@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -203,12 +205,62 @@ public class DefaultPluginLoader implements PluginLoader {
 	 * 
 	 * @param args
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		DefaultFrameworkContext ctx = new DefaultFrameworkContext();
 		DefaultPluginLoader loader = new DefaultPluginLoader();
 		loader.setCtx(ctx);
 		loader.load();
-		System.out.println(ctx);
+		// System.out.println(ctx);
+
+		// TEST==========
+		String req = "/";
+		// step1 find action
+		Map<String, Object> routers = ctx.getRouters();
+		Router matchRouter = null;
+		for (String key : routers.keySet()) {
+			List<Router> list = (List<Router>) routers.get(key);
+			for (Router router : list) {
+				if (router.getPath().equalsIgnoreCase(req)) {
+					matchRouter = router;
+					break;
+				}
+			}
+			if (matchRouter != null) {
+				break;
+			}
+		}
+		// step2 invoke action
+		Object actionObj = null;
+		if (matchRouter != null) {
+			String action = matchRouter.getAction();
+
+			Class<?> clz = (Class<?>) ctx.getActions()
+					.get(action.split("/")[0]);
+			try {
+				if (null == clz) {
+					throw new FileNotFoundException("404");
+				}
+				actionObj = clz.newInstance();
+				String methodName = action.split("/")[1];
+				Method method = clz.getMethod(methodName, null);
+				method.invoke(actionObj, new Object[] {});
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 }
