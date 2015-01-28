@@ -1,5 +1,6 @@
 package com.linpeng.micro.core;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -9,7 +10,31 @@ import java.util.Map;
  *
  */
 public class DefaultFrameworkContext implements FrameworkContext {
-	public Map<String, Object> actions;
-	public Map<String, Object> routers;
-	public Map<String, Object> views;
+	private Map<String, Object> actions = new HashMap<String, Object>();
+	private Map<String, Object> routers = new HashMap<String, Object>();
+	private Map<String, Object> views = new HashMap<String, Object>();
+
+	public Map<String, Object> getViews() {
+		return views;
+	}
+
+	public void setViews(Map<String, Object> views) {
+		this.views = views;
+	}
+
+	public Map<String, Object> getRouters() {
+		return routers;
+	}
+
+	public void setRouters(Map<String, Object> routers) {
+		this.routers = routers;
+	}
+
+	public Map<String, Object> getActions() {
+		return actions;
+	}
+
+	public void setActions(Map<String, Object> actions) {
+		this.actions = actions;
+	}
 }
