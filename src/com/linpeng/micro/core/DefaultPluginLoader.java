@@ -57,11 +57,11 @@ public class DefaultPluginLoader implements PluginLoader {
 		String pluginName = plugin.getName();
 		for (File item : plugin.listFiles()) {
 			String fileName = item.getName();
-			if (fileName.equalsIgnoreCase("action")) {
+			if (fileName.equalsIgnoreCase(ACTION_SOURCE)) {
 				loadAction(pluginName, item);
-			} else if (fileName.equalsIgnoreCase("router")) {
+			} else if (fileName.equalsIgnoreCase(ROUTER_SOURCE)) {
 				loadRouter(pluginName, item);
-			} else if (fileName.equalsIgnoreCase("view")) {
+			} else if (fileName.equalsIgnoreCase(VIEW_SOURCE)) {
 				loadView(pluginName, item);
 			}
 		}
@@ -149,9 +149,8 @@ public class DefaultPluginLoader implements PluginLoader {
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		List<File> javaFiles = new ArrayList<File>();
 
-		String basePath = plugins.getAbsolutePath() + File.separatorChar
-				+ pluginName + File.separatorChar + "action"
-				+ File.separatorChar;
+		String basePath = plugins.getAbsolutePath() + File.separator
+				+ pluginName + File.separator + ACTION_SOURCE + File.separator;
 
 		recursiveFile(item, javaFiles);
 		for (File action : javaFiles) {
