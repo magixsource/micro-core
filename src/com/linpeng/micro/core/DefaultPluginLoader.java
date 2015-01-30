@@ -173,6 +173,15 @@ public class DefaultPluginLoader implements PluginLoader {
 
 	}
 
+	/**
+	 * Make path to className<br>
+	 * \java\workspace\project-a\src\com\project\demo\A.java to
+	 * com.project.demo.A so ClassLoader can be load
+	 * 
+	 * @param path
+	 * @param basePath
+	 * @return
+	 */
 	private String parsetPath2ClassName(String path, String basePath) {
 		String className = path.replace(basePath, "").replace(".java", "")
 				.replace(File.separator, ".");
@@ -242,7 +251,7 @@ public class DefaultPluginLoader implements PluginLoader {
 				}
 				actionObj = clz.newInstance();
 				String methodName = action.split("/")[1];
-				Method method = clz.getMethod(methodName, new Class[]{});
+				Method method = clz.getMethod(methodName, new Class[] {});
 				method.invoke(actionObj, new Object[] {});
 			} catch (InstantiationException e) {
 				e.printStackTrace();
