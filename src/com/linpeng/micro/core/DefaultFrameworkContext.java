@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Default Framework context: support useful tools
+ * Default MVC Framework context: support useful tools
  * 
  * @author linpeng
  *

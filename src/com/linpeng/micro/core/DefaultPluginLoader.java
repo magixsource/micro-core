@@ -22,6 +22,10 @@ import com.linpeng.micro.action.Action;
  */
 public class DefaultPluginLoader implements PluginLoader {
 
+	/**
+	 * In fact,ctx should be a extension in different scene<br>
+	 * DefaultFrameworkContext here is a demo ctx implement as a MVC ctx
+	 */
 	private DefaultFrameworkContext ctx;
 	public static final File plugins = new File(PLUGIN_SOURCE);
 
@@ -34,7 +38,7 @@ public class DefaultPluginLoader implements PluginLoader {
 	}
 
 	/**
-	 * Check is file okay
+	 * Check if file okay
 	 * 
 	 * @param plugins
 	 */
