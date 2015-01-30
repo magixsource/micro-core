@@ -1,12 +1,12 @@
 package com.linpeng.micro.core;
 
 /**
- * Router
+ * Route
  * 
  * @author linpeng
  *
  */
-public class Router {
+public class Route {
 	/** request path */
 	public String path;
 	/** which action */

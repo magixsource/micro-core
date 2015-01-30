@@ -101,12 +101,12 @@ public class DefaultPluginLoader implements PluginLoader {
 	 */
 	@SuppressWarnings("unchecked")
 	private void loadRouter(String pluginName, File item) {
-		List<Router> pluginRouters = (List<Router>) getCtx().getRouters().get(
+		List<Route> pluginRouters = (List<Route>) getCtx().getRouters().get(
 				pluginName);
 		// Format: / index index.html
 		boolean callback = false;
 		if (null == pluginRouters) {
-			pluginRouters = new ArrayList<Router>();
+			pluginRouters = new ArrayList<Route>();
 			callback = true;
 		}
 		BufferedReader reader = null;
@@ -116,7 +116,7 @@ public class DefaultPluginLoader implements PluginLoader {
 				String cfg = reader.readLine();
 				String[] array = cfg.split("\t+");
 
-				Router rt = new Router();
+				Route rt = new Route();
 				rt.setPath(array[0]);
 				rt.setAction(array[1]);
 				rt.setView(array[2]);
@@ -216,10 +216,10 @@ public class DefaultPluginLoader implements PluginLoader {
 		String req = "/";
 		// step1 find action
 		Map<String, Object> routers = ctx.getRouters();
-		Router matchRouter = null;
+		Route matchRouter = null;
 		for (String key : routers.keySet()) {
-			List<Router> list = (List<Router>) routers.get(key);
-			for (Router router : list) {
+			List<Route> list = (List<Route>) routers.get(key);
+			for (Route router : list) {
 				if (router.getPath().equalsIgnoreCase(req)) {
 					matchRouter = router;
 					break;
